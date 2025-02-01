@@ -16,7 +16,6 @@ val appModule = module {
 class LanguageCardApp:  Application() {
     override fun onCreate() {
         super.onCreate()
-
         startKoin {
             androidContext(this@LanguageCardApp)
             modules(listOf(appModule))
