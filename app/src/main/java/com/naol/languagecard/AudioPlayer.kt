@@ -6,11 +6,21 @@ import android.util.Log
 
 object AudioPlayer {
     private var mediaPlayer: MediaPlayer? = null
+    var isAudioLoading: Boolean = false
+        private set
 
-    fun playAudioSequence(context: Context, wordAudioFile: String, sentenceAudioFile: String) {
+    fun playAudioSequence(
+        context: Context,
+        wordAudioFile: String,
+        sentenceAudioFile: String,
+        onLoading: (Boolean) -> Unit
+    ) {
         mediaPlayer?.release()
         mediaPlayer = MediaPlayer().apply {
             try {
+                isAudioLoading = true
+                onLoading(true)
+
                 val wordFileDescriptor = context.assets.openFd("audio/$wordAudioFile")
                 setDataSource(
                     wordFileDescriptor.fileDescriptor,
@@ -24,19 +34,25 @@ object AudioPlayer {
                 setOnCompletionListener {
                     it.release()
                     mediaPlayer = null
-                    playSentenceAudio(context, sentenceAudioFile)
+                    playSentenceAudio(context, sentenceAudioFile, onLoading)
                 }
             } catch (e: Exception) {
                 Log.e("AudioPlayer", "Error playing word audio: $wordAudioFile", e)
-                playSentenceAudio(context, sentenceAudioFile)
+                playSentenceAudio(context, sentenceAudioFile, onLoading)
             }
         }
     }
 
-    private fun playSentenceAudio(context: Context, sentenceAudioFile: String) {
+    private fun playSentenceAudio(
+        context: Context,
+        sentenceAudioFile: String,
+        onLoading: (Boolean) -> Unit
+    ) {
         mediaPlayer?.release()
         mediaPlayer = MediaPlayer().apply {
             try {
+                isAudioLoading = true
+                onLoading(true)
                 val sentenceFileDescriptor = context.assets.openFd("audio/$sentenceAudioFile")
                 setDataSource(
                     sentenceFileDescriptor.fileDescriptor,
@@ -58,5 +74,6 @@ object AudioPlayer {
     fun release() {
         mediaPlayer?.release()
         mediaPlayer = null
+//        isAudioLoading = false
     }
 }
