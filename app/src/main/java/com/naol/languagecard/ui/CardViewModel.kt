@@ -1,12 +1,12 @@
-package com.naol.languagecard
+package com.naol.languagecard.ui
 
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import com.naol.languagecard.R
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-
 
 data class CardData(
     val id: Int,
@@ -16,16 +16,21 @@ data class CardData(
     val sentenceSecondLang: String
 )
 
-class CardViewModel(private val context: Context) : ViewModel()  {
+class CardViewModel(private val context: Context) : ViewModel() {
     private val _cards = MutableStateFlow<List<CardData>>(emptyList())
     val cards: StateFlow<List<CardData>> = _cards
+
+    private val _currentIndex = MutableStateFlow(0)
+    val currentIndex: StateFlow<Int> get() = _currentIndex
 
     init {
         _cards.value = loadCards()
     }
 
-    fun removeCard(card: CardData) {
-        _cards.value = _cards.value.filter { it.id != card.id }
+    fun swipeCard() {
+        if (_currentIndex.value < _cards.value.size - 1) {
+            _currentIndex.value += 1
+        }
     }
 
     private fun loadCards(): List<CardData> {
