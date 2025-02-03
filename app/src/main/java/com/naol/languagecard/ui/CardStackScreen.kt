@@ -116,10 +116,6 @@ fun CardStack(
                                 scaleY = cardScale
                             }
                             .zIndex((maxVisibleCards - index).toFloat())
-                            .shadow(
-                                elevation = 8.dp,
-                                shape = RoundedCornerShape(16.dp)
-                            )
                     )
                 }
             }
